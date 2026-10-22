@@ -1,4 +1,5 @@
 import { expect, Locator, Page } from "@playwright/test";
+import { todayStamp } from "../utils/csv";
 
 export interface StatementRow {
   transactionId: string;
@@ -18,6 +19,9 @@ export class SelfStatementPage {
   readonly bodyRows: Locator;
   readonly nextPageBtn: Locator;
   readonly currentBalanceHeading: Locator;
+  readonly menuLink: Locator;
+  readonly fromDateInput: Locator;
+  readonly toDateInput: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -26,11 +30,23 @@ export class SelfStatementPage {
     this.bodyRows = this.table.locator("tbody tr");
     this.nextPageBtn = page.getByRole("button", { name: "Go to next page" });
     this.currentBalanceHeading = page.getByRole("heading", { name: /Current Balance/ });
+    // the left menu also renders a hidden mobile drawer, so only the visible link counts
+    this.menuLink = page.getByRole("navigation").getByRole("link", { name: "Self Statement" }).filter({ visible: true });
+    this.fromDateInput = page.getByLabel("From Date");
+    this.toDateInput = page.getByLabel("To Date");
   }
 
+  /** Opens the Self Statement section from the left menu. */
   async goto() {
-    await this.page.goto("/agent/self-statement");
+    if (!this.page.url().startsWith("http")) await this.page.goto("/profile");
+    await this.menuLink.click();
+    await expect(this.page).toHaveURL(/\/agent\/self-statement/);
     await expect(this.headerCells.first()).toBeVisible();
+    // the page defaults the filter to the UTC date, which hides today's rows
+    // between local midnight and UTC midnight, so set it to the local date
+    const today = todayStamp();
+    await this.toDateInput.fill(today);
+    await this.fromDateInput.fill(today);
     await this.page.waitForLoadState("networkidle");
   }
 
