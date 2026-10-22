@@ -1,0 +1,27 @@
+{
+  "Admin": {
+    "Email": "admin@dmoney.com",
+    "Password": "1234"
+  },
+  "System": {
+    "Email": "system@dmoney.com",
+    "Password": "1234"
+  },
+  "Agent": {
+    "Id": "106217",
+    "Name": "Cyril Barrows",
+    "Email": "mashrur.safir.shabab+agent029798124@gmail.com",
+    "Password": "5678",
+    "InitialPassword": "1234",
+    "Phone": "01629798124",
+    "NID": "6684309966"
+  },
+  "Customer": {
+    "Id": "106190",
+    "Phone": "01829927795"
+  },
+  "Transactions": {
+    "SystemDepositTxnId": "TXNT0N04SNVU8",
+    "CustomerDepositFee": 0
+  }
+}

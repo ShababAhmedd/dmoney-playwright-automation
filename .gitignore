@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Playwright output
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+# agent session handed between journeys
+/playwright/.auth/
+auth.json
+
+# Generated self statement exports
+/output/
+
+# Secrets — never commit (Gmail token / address)
+.env
+.env.*
+!.env.example
+
+# Assignment brief
+assign.md
+
+# Local AI / editor tooling
+.agents/
+.claude/
+skills-lock.json
+.vscode/
+.idea/
+
+# CI workflow (kept local)
+.github/
+
+# OS / logs
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
