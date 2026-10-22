@@ -82,7 +82,11 @@ Add `HEADLESS=true` to any command to run without a visible browser. Suites are 
 **Negative (`@negative`)**: non-Gmail registration · invalid phone number · duplicate email · pending agent cannot transact · unregistered email login · wrong password · invalid OTP · protected pages before login and after logout · cash in to a non-existent account · zero amount (`Amount is required.`) · amount above the balance · reset for an unregistered email · invalid reset token · mismatched passwords · login with the old password after reset.
 ## Automation video
 
-Full regression run in headed mode: [docs/full-automation.mp4](docs/full-automation.mp4)
+Full regression run in headed mode: 
+
+https://github.com/user-attachments/assets/2bf45fad-58a5-4a9a-b70d-d5512e991583
+
+
 
 ## Regression Test Result
 
