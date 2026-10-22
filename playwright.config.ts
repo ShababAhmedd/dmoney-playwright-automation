@@ -33,6 +33,9 @@ export default defineConfig({
     navigationTimeout: 30_000,
     screenshot: "only-on-failure",
     trace: "retain-on-failure",
+    // VIDEO=true records every journey (used for the README recording); the journeys
+    // open their own page in beforeAll, which the plain `video` option doesn't cover
+    contextOptions: process.env.VIDEO === "true" ? { recordVideo: { dir: "videos/", size: { width: 1280, height: 720 } } } : {},
   },
   // each journey is its own project; dependencies run them in order and pass data
   // forward through .state/ (see utils/journeyState.ts)

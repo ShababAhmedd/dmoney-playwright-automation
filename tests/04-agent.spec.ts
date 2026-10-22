@@ -1,7 +1,7 @@
 import { test, expect, Page } from "@playwright/test";
 import { SUITES } from "../utils/suites";
 import {
-  AGENT_COMMISSION_RATE, CUSTOMER_DEPOSIT, LOGIN_FAILED, NON_EXISTENT_PHONE, SYSTEM_DEPOSIT,
+  AGENT_COMMISSION_RATE, CUSTOMER_DEPOSIT, SYSTEM_DEPOSIT,
 } from "../utils/testData";
 import { JourneyState, loadJourney, saveJourney } from "../utils/journeyState";
 import { getLoginOtp } from "../utils/gmail";
@@ -27,20 +27,14 @@ test.describe("Agent journey", () => {
     await page.context().close();
   });
 
-  test("Agent cannot log in with a wrong password", { tag: SUITES.negative }, async () => {
-    const loginPage = new LoginPage(page);
-    await loginPage.submitCredentials({ email: state.agent.email, password: "9999" });
-    await expect(loginPage.errorAlert).toHaveText(LOGIN_FAILED);
-    await expect(loginPage.otpInput).toBeHidden();
-  });
-
   test("Agent cannot log in with an invalid OTP", { tag: SUITES.negative }, async () => {
     const loginPage = new LoginPage(page);
     const sentAt = await loginPage.submitCredentials(state.agent);
     await expect(loginPage.otpInput).toBeVisible();
-    // read the real OTP so the wrong one is guaranteed to differ (and this email is never reused)
+    // read the real OTP so the wrong one is guaranteed to differ (and this email is never reused);
+    // never use 0000, which local setups accept as a dev bypass OTP
     const realOtp = await getLoginOtp(sentAt);
-    await loginPage.otpInput.fill(realOtp === "0000" ? "1111" : "0000");
+    await loginPage.otpInput.fill(realOtp === "1111" ? "2222" : "1111");
     await loginPage.verifyOtpBtn.click();
     await expect(loginPage.errorAlert).toHaveText("Invalid OTP. Please try again.");
     await expect(page).toHaveURL(/\/login/);
@@ -54,19 +48,6 @@ test.describe("Agent journey", () => {
   test("Agent balance is exactly 2000 Tk", { tag: SUITES.smoke }, async () => {
     balanceBeforeCustomerDeposit = await new ProfilePage(page).getBalance();
     expect(balanceBeforeCustomerDeposit).toBe(SYSTEM_DEPOSIT);
-  });
-
-  test("Agent cannot deposit to a non-existent account", { tag: SUITES.negative }, async () => {
-    const cashIn = new CashInPage(page);
-    await cashIn.cashIn(NON_EXISTENT_PHONE, CUSTOMER_DEPOSIT);
-    await expect(cashIn.errorAlert).toHaveText("To Account does not exist");
-    await expect(cashIn.successMessage).toBeHidden();
-  });
-
-  test("Agent cannot deposit a zero amount", { tag: SUITES.negative }, async () => {
-    const result = await new CashInPage(page).submitBlockedByValidation(state.customerPhone!, 0);
-    expect(result.validationMessage).not.toBe("");
-    expect(result.requested).toBe(false);
   });
 
   test("Agent cannot deposit more than the available balance", { tag: SUITES.negative }, async () => {

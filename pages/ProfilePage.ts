@@ -5,12 +5,15 @@ export class ProfilePage {
   readonly balanceInput: Locator;
   readonly roleInput: Locator;
   readonly emailInput: Locator;
+  readonly statusBanner: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.balanceInput = page.getByRole("textbox", { name: "Current Balance (BDT)" });
     this.roleInput = page.getByRole("textbox", { name: "Role" });
     this.emailInput = page.getByRole("textbox", { name: "Email Address" });
+    // shown only while the account is not active
+    this.statusBanner = page.getByRole("main").getByRole("alert").filter({ hasText: /account is/i });
   }
 
   async goto() {

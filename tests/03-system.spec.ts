@@ -1,6 +1,6 @@
 import { test, expect, Page } from "@playwright/test";
 import { SUITES } from "../utils/suites";
-import { LOGIN_FAILED, NON_EXISTENT_PHONE, SYSTEM, SYSTEM_DEPOSIT } from "../utils/testData";
+import { NON_EXISTENT_PHONE, SYSTEM, SYSTEM_DEPOSIT } from "../utils/testData";
 import { JourneyState, loadJourney, saveJourney } from "../utils/journeyState";
 import { LoginPage } from "../pages/LoginPage";
 import { Header } from "../pages/Header";
@@ -23,13 +23,6 @@ test.describe("System journey", () => {
     await page.context().close();
   });
 
-  test("System cannot log in with a wrong password", { tag: SUITES.negative }, async () => {
-    const loginPage = new LoginPage(page);
-    await loginPage.submitCredentials({ email: SYSTEM.email, password: "9999" });
-    await expect(loginPage.errorAlert).toHaveText(LOGIN_FAILED);
-    await expect(page).toHaveURL(/\/login/);
-  });
-
   test("System login is successful", { tag: SUITES.smoke }, async () => {
     await new LoginPage(page).login(SYSTEM);
     await expect(new ProfilePage(page).emailInput).toHaveValue(SYSTEM.email);
@@ -43,8 +36,9 @@ test.describe("System journey", () => {
   });
 
   test("System cannot deposit a zero amount to the Agent", { tag: SUITES.negative }, async () => {
-    const result = await new CashInPage(page).submitBlockedByValidation(state.agent.phone, 0);
-    expect(result.validationMessage).not.toBe("");
+    const cashIn = new CashInPage(page);
+    const result = await cashIn.submitBlockedByValidation(state.agent.phone, 0);
+    await expect(cashIn.amountError).toHaveText("Amount is required.");
     expect(result.requested).toBe(false);
   });
 

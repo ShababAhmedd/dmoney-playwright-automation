@@ -15,6 +15,7 @@ export class CashInPage {
   readonly cashInBtn: Locator;
   readonly errorAlert: Locator;
   readonly successMessage: Locator;
+  readonly amountError: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -23,6 +24,8 @@ export class CashInPage {
     this.cashInBtn = page.getByRole("button", { name: "Cash In →" });
     this.errorAlert = page.getByRole("main").getByRole("alert");
     this.successMessage = page.getByRole("main").getByText(/successful/i);
+    // helper text rendered under the amount field by the form's validation
+    this.amountError = page.locator(".MuiFormHelperText-root").filter({ hasText: /\S/ });
   }
 
   async goto() {
@@ -37,8 +40,8 @@ export class CashInPage {
   }
 
   /**
-   * Submits a cash in that the browser's own validation should block (e.g. amount 0, min=1).
-   * Returns the native validation message and whether a deposit request was sent anyway.
+   * Submits a cash in that the form's own validation should block (e.g. amount 0).
+   * Returns whether a deposit request was sent anyway.
    */
   async submitBlockedByValidation(phone: string, amount: number | string) {
     let requested = false;
@@ -47,10 +50,9 @@ export class CashInPage {
     };
     this.page.on("request", onRequest);
     await this.cashIn(phone, amount);
-    const validationMessage = await this.amountInput.evaluate((el: HTMLInputElement) => el.validationMessage);
     await expect(this.successMessage).toBeHidden();
     this.page.off("request", onRequest);
-    return { validationMessage, requested };
+    return { requested };
   }
 
   /** Reads the receipt shown after a successful cash in. */

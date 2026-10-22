@@ -8,20 +8,20 @@
     "Password": "1234"
   },
   "Agent": {
-    "Id": "106217",
-    "Name": "Cyril Barrows",
-    "Email": "mashrur.safir.shabab+agent029798124@gmail.com",
+    "Id": "106234",
+    "Name": "Erika Ankunding",
+    "Email": "mashrur.safir.shabab+agent852095727@gmail.com",
     "Password": "5678",
     "InitialPassword": "1234",
-    "Phone": "01629798124",
-    "NID": "6684309966"
+    "Phone": "01652095727",
+    "NID": "0642587072"
   },
   "Customer": {
-    "Id": "106190",
-    "Phone": "01829927795"
+    "Id": "106228",
+    "Phone": "01234567881"
   },
   "Transactions": {
-    "SystemDepositTxnId": "TXNT0N04SNVU8",
+    "SystemDepositTxnId": "TXND3BICSJI5T",
     "CustomerDepositFee": 0
   }
 }

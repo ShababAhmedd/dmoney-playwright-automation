@@ -6,6 +6,7 @@ export class UserDetailsPage {
   readonly saveBtn: Locator;
   readonly statusSelect: Locator;
   readonly statusBadge: Locator;
+  readonly snackbar: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -14,6 +15,7 @@ export class UserDetailsPage {
     // second combobox on the page: Role, then Account Status
     this.statusSelect = page.getByRole("main").getByRole("combobox").nth(1);
     this.statusBadge = page.getByRole("main").getByText(/^(ACTIVE|PENDING|SUSPENDED)$/);
+    this.snackbar = page.locator(".MuiSnackbar-root").getByRole("alert");
   }
 
   async goto(userId: string) {

@@ -6,6 +6,8 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+# raw per-journey recordings (VIDEO=true); the stitched one lives in docs/
+/videos/
 # agent session handed between journeys
 /playwright/.auth/
 auth.json

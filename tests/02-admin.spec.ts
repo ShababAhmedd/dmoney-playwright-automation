@@ -68,6 +68,7 @@ test.describe("Admin journey", () => {
     const response = page.waitForResponse((r) => r.request().method() !== "GET" && r.url().includes(state.agentId!));
     await details.setStatus("Active");
     expect((await response).ok()).toBeTruthy();
+    await expect(details.snackbar).toHaveText("User updated successfully");
     await expect(details.statusBadge).toHaveText("ACTIVE");
   });
 
