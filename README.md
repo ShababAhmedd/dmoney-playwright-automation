@@ -86,7 +86,9 @@ Add `HEADLESS=true` to any command to run without a visible browser. Suites are 
 
 Full regression run in headed mode: 
 
-https://github.com/user-attachments/assets/2bf45fad-58a5-4a9a-b70d-d5512e991583
+https://github.com/user-attachments/assets/954ea017-2f72-4e2c-bf95-9d776d06b438
+
+
 
 
 
