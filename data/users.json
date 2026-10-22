@@ -6,22 +6,5 @@
   "System": {
     "Email": "system@dmoney.com",
     "Password": "1234"
-  },
-  "Agent": {
-    "Id": "106246",
-    "Name": "Walton Daniel",
-    "Email": "mashrur.safir.shabab+agent968792927@gmail.com",
-    "Password": "5678",
-    "InitialPassword": "1234",
-    "Phone": "01668792927",
-    "NID": "0751252477"
-  },
-  "Customer": {
-    "Id": "106228",
-    "Phone": "01234567881"
-  },
-  "Transactions": {
-    "SystemDepositTxnId": "TXNQ460UOCZVY",
-    "CustomerDepositFee": 0
   }
 }

@@ -25,7 +25,7 @@ A new Agent registers and an Admin activates the account. The System account dep
 ## Project structure
 
 ```
-├── data/users.json          # Admin / System credentials + the agent created by the last run
+├── data/users.json          # Admin / System credentials
 ├── pages/                   # Page objects (one per screen)
 ├── tests/                   # One spec file per journey, run in order
 │   ├── 01-registration.spec.ts
@@ -36,13 +36,14 @@ A new Agent registers and an Admin activates the account. The System account dep
 │   └── 06-self-statement.spec.ts
 ├── utils/                   # Test data, Gmail OTP reader, CSV writer, journey state, suite tags
 ├── output/                  # Generated self_statement_<YYYY-MM-DD>.csv (git-ignored)
+├── .state/                  # The new agent and IDs handed between journeys (git-ignored)
 ├── docs/                    # README video and screenshots
 └── playwright.config.ts
 ```
 
 ## How the journey is organised
 
-Each spec file is a Playwright **project**. The projects are chained with `dependencies`, so they always run in order: registration → admin → system → agent → password-reset → self-statement. Data such as the new agent's details, user IDs and transaction IDs is passed from one journey to the next through `data/users.json`.
+Each spec file is a Playwright **project**. The projects are chained with `dependencies`, so they always run in order: registration → admin → system → agent → password-reset → self-statement. Data such as the new agent's details, user IDs and transaction IDs is passed from one journey to the next through `.state/journey.json`. That file is git-ignored because the agent's email is an alias of the Gmail inbox.
 
 In each journey, the negative cases run first and then the positive ones. A negative case that needs data from a positive one runs after it, for example the duplicate-email check after a successful registration.
 
@@ -79,7 +80,8 @@ Add `HEADLESS=true` to any command to run without a visible browser. Suites are 
 
 **Positive (`@smoke`)**: Agent registration · Agent initially inactive · Admin login · Agent appears in the Admin user list · Admin activates the Agent (including the success message) · Agent stays active after reload · System login · System deposits 2000 Tk · System deposit transaction record · Agent login after activation · Agent balance is exactly 2000 Tk · Agent deposits 500 Tk to a Customer · Agent balance after the transaction · Deposit appears in the Self Statement · Agent logout · Password reset · Login with the new password · Self Statement data · CSV export.
 
-**Negative (`@negative`)**: non-Gmail registration · invalid phone number · duplicate email · pending agent cannot transact · unregistered email login · wrong password · invalid OTP · protected pages before login and after logout · cash in to a non-existent account · zero amount (`Amount is required.`) · amount above the balance · reset for an unregistered email · invalid reset token · mismatched passwords · login with the old password after reset.
+**Negative (`@negative`)**: empty registration form · non-Gmail registration · invalid phone number · duplicate email · duplicate phone number · pending agent cannot transact · unregistered email login · Admin and System wrong password · invalid OTP · protected pages before login and after logout · cash in to a non-existent account · cash in to the Agent's own account · zero amount (`Amount is required.`) · negative amount · amount below 10 Tk or above 10000 Tk · amount above the balance (`Insufficient balance`) · reset for an unregistered email · invalid reset token · mismatched passwords · login with the old password after reset.
+
 ## Automation video
 
 Full regression run in headed mode: 
@@ -90,7 +92,7 @@ https://github.com/user-attachments/assets/2bf45fad-58a5-4a9a-b70d-d5512e991583
 
 ## Regression Test Result
 
-All 41 tests (positive + negative):
+All 49 tests (positive + negative):
 
 ![Regression Test Result](docs/regression-test-result.png)
 

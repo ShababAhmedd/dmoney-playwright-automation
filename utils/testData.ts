@@ -43,5 +43,9 @@ export const SYSTEM_DEPOSIT = 2000;
 export const CUSTOMER_DEPOSIT = 500;
 // agents earn a 2.5% commission on every cash in to a customer
 export const AGENT_COMMISSION_RATE = 0.025;
+// per-transaction cash in limits, checked before the sender's balance
+export const MIN_DEPOSIT = 10;
+export const MAX_DEPOSIT = 10_000;
 export const NON_EXISTENT_PHONE = "01000000001";
 export const LOGIN_FAILED = "Login failed. Please input correct email/phone number or password.";
+export const DEPOSIT_LIMIT_ERROR = "Minimum deposit amount is 10 tk and maximum deposit amount is 10000 tk";

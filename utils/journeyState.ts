@@ -4,7 +4,7 @@ import { NewUser, newAgent } from "./testData";
 
 /**
  * Data handed from one journey (spec file / project) to the next, persisted in
- * data/users.json next to the Admin and System credentials.
+ * .state/journey.json (git-ignored, since the agent's email is a Gmail alias).
  * Journeys run in order via project dependencies in playwright.config.ts.
  */
 export interface JourneyState {
@@ -17,35 +17,13 @@ export interface JourneyState {
   customerDepositFee?: number;
 }
 
-const USERS_FILE = path.resolve(__dirname, "../data/users.json");
+const STATE_FILE = path.resolve(__dirname, "../.state/journey.json");
 /** Logged-in agent session saved after the password-reset journey. */
 export const AGENT_AUTH_FILE = path.resolve(__dirname, "../playwright/.auth/agent.json");
 
-function readUsers(): Record<string, any> {
-  return JSON.parse(fs.readFileSync(USERS_FILE, "utf8"));
-}
-
 function writeState(state: JourneyState) {
-  const { agent } = state;
-  const users = {
-    Admin: readUsers().Admin,
-    System: readUsers().System,
-    Agent: {
-      Id: state.agentId,
-      Name: agent.name,
-      Email: agent.email,
-      Password: agent.password,
-      InitialPassword: state.initialPassword,
-      Phone: agent.phone,
-      NID: agent.nid,
-    },
-    Customer: { Id: state.customerId, Phone: state.customerPhone },
-    Transactions: {
-      SystemDepositTxnId: state.systemDepositTxnId,
-      CustomerDepositFee: state.customerDepositFee,
-    },
-  };
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2) + "\n");
+  fs.mkdirSync(path.dirname(STATE_FILE), { recursive: true });
+  fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2) + "\n");
 }
 
 /** Starts a new journey with a freshly generated agent. */
@@ -57,24 +35,8 @@ export function startJourney(): JourneyState {
 }
 
 export function loadJourney(): JourneyState {
-  const { Agent, Customer = {}, Transactions = {} } = readUsers();
-  if (!Agent?.Email) throw new Error("No Agent in data/users.json — the registration journey must run first");
-  return {
-    agent: {
-      name: Agent.Name,
-      email: Agent.Email,
-      password: Agent.Password,
-      phone: Agent.Phone,
-      nid: Agent.NID,
-      role: "Agent",
-    },
-    initialPassword: Agent.InitialPassword,
-    agentId: Agent.Id,
-    customerId: Customer.Id,
-    customerPhone: Customer.Phone,
-    systemDepositTxnId: Transactions.SystemDepositTxnId,
-    customerDepositFee: Transactions.CustomerDepositFee,
-  };
+  if (!fs.existsSync(STATE_FILE)) throw new Error("No .state/journey.json — the registration journey must run first");
+  return JSON.parse(fs.readFileSync(STATE_FILE, "utf8"));
 }
 
 /** Merges `patch` into the saved state and returns the result. */

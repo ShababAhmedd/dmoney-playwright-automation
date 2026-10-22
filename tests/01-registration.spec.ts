@@ -22,6 +22,14 @@ test.describe("Registration journey", () => {
     await page.context().close();
   });
 
+  test("Registration rejects an empty form", { tag: SUITES.negative }, async () => {
+    const registerPage = new RegisterPage(page);
+    await registerPage.openFromHome();
+    await registerPage.createAccountBtn.click();
+    await expect(registerPage.alert).toHaveText("All fields are required.");
+    await expect(page).toHaveURL(/\/register/);
+  });
+
   test("Registration rejects a non-Gmail email address", { tag: SUITES.negative }, async () => {
     const registerPage = new RegisterPage(page);
     await registerPage.openFromHome();
@@ -48,12 +56,20 @@ test.describe("Registration journey", () => {
     await expect(page).toHaveURL(/\/login/);
   });
 
-  // needs the account above to exist, so it runs after the positive case
+  // these need the account above to exist, so they run after the positive case
   test("Registration rejects an email that is already registered", { tag: SUITES.negative }, async () => {
     const registerPage = new RegisterPage(page);
     await registerPage.openFromHome();
     await registerPage.register({ ...newAgent(), email: state.agent.email });
     await expect(registerPage.alert).toHaveText("An account with this email already exists");
+    await expect(page).toHaveURL(/\/register/);
+  });
+
+  test("Registration rejects a phone number that is already registered", { tag: SUITES.negative }, async () => {
+    const registerPage = new RegisterPage(page);
+    await registerPage.openFromHome();
+    await registerPage.register({ ...newAgent(), phone: state.agent.phone });
+    await expect(registerPage.alert).toHaveText("An account with this phone number already exists");
     await expect(page).toHaveURL(/\/register/);
   });
 

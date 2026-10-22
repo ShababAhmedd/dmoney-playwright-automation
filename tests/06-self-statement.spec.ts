@@ -6,6 +6,9 @@ import { AGENT_AUTH_FILE, JourneyState, loadJourney } from "../utils/journeyStat
 import { parseCsv, saveSelfStatementCsv } from "../utils/csv";
 import { SelfStatementPage } from "../pages/SelfStatementPage";
 
+// well before the agent was registered, so the table holds every transaction it has
+const STATEMENT_FROM = "2020-01-01";
+
 let page: Page;
 let state: JourneyState;
 let csvHeaders: string[] = [];
@@ -27,7 +30,7 @@ test.describe("Self Statement journey", () => {
 
   test("Self Statement contains the expected transaction data", { tag: SUITES.smoke }, async () => {
     const statement = new SelfStatementPage(page);
-    await statement.goto();
+    await statement.goto(STATEMENT_FROM);
     csvHeaders = await statement.getHeaders();
     expect(csvHeaders).toEqual([
       "Transaction ID", "Sender Account", "Receiver Account", "Type", "Debit", "Credit", "Balance", "Date",

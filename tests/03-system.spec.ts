@@ -1,6 +1,6 @@
 import { test, expect, Page } from "@playwright/test";
 import { SUITES } from "../utils/suites";
-import { NON_EXISTENT_PHONE, SYSTEM, SYSTEM_DEPOSIT } from "../utils/testData";
+import { LOGIN_FAILED, NON_EXISTENT_PHONE, SYSTEM, SYSTEM_DEPOSIT } from "../utils/testData";
 import { JourneyState, loadJourney, saveJourney } from "../utils/journeyState";
 import { LoginPage } from "../pages/LoginPage";
 import { Header } from "../pages/Header";
@@ -21,6 +21,13 @@ test.describe("System journey", () => {
 
   test.afterAll(async () => {
     await page.context().close();
+  });
+
+  test("System cannot log in with a wrong password", { tag: SUITES.negative }, async () => {
+    const loginPage = new LoginPage(page);
+    await loginPage.submitCredentials({ email: SYSTEM.email, password: "9999" });
+    await expect(loginPage.errorAlert).toHaveText(LOGIN_FAILED);
+    await expect(page).toHaveURL(/\/login/);
   });
 
   test("System login is successful", { tag: SUITES.smoke }, async () => {

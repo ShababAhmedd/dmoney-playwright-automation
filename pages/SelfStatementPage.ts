@@ -36,17 +36,16 @@ export class SelfStatementPage {
     this.toDateInput = page.getByLabel("To Date");
   }
 
-  /** Opens the Self Statement section from the left menu. */
-  async goto() {
+  /** Opens the Self Statement section from the left menu, filtered from `fromDate` to today. */
+  async goto(fromDate = todayStamp()) {
     if (!this.page.url().startsWith("http")) await this.page.goto("/profile");
     await this.menuLink.click();
     await expect(this.page).toHaveURL(/\/agent\/self-statement/);
     await expect(this.headerCells.first()).toBeVisible();
     // the page defaults the filter to the UTC date, which hides today's rows
     // between local midnight and UTC midnight, so set it to the local date
-    const today = todayStamp();
-    await this.toDateInput.fill(today);
-    await this.fromDateInput.fill(today);
+    await this.toDateInput.fill(todayStamp());
+    await this.fromDateInput.fill(fromDate);
     await this.page.waitForLoadState("networkidle");
   }
 
